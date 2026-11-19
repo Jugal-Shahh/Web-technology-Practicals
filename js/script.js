@@ -1,0 +1,1095 @@
+const menuToggle =
+    document.getElementById("menuToggle");
+
+const mainNav =
+    document.getElementById("mainNav");
+
+if (menuToggle && mainNav) {
+
+    menuToggle.addEventListener(
+        "click",
+        function () {
+
+            mainNav.classList.toggle("open");
+
+            const isOpen =
+                mainNav.classList.contains("open");
+
+            menuToggle.setAttribute(
+                "aria-label",
+                isOpen
+                    ? "Close navigation menu"
+                    : "Open navigation menu"
+            );
+
+        }
+    );
+
+}
+
+
+/* =================================================
+   2. LIGHT / DARK THEME
+================================================= */
+
+const themeToggle =
+    document.getElementById("themeToggle");
+
+const themeStorageKey = "studentHubTheme";
+
+function isDarkTheme() {
+    try {
+        return localStorage.getItem(themeStorageKey) === "dark";
+    } catch (error) {
+        console.error("Unable to read the saved theme preference.", error);
+        return false;
+    }
+}
+
+function applyTheme(isDark) {
+    document.body.classList.toggle("dark-theme", isDark);
+
+    if (themeToggle) {
+        themeToggle.setAttribute("aria-pressed", String(isDark));
+    }
+}
+
+function updateThemeButton() {
+
+    if (!themeToggle) {
+        return;
+    }
+
+    if (
+        document.body.classList.contains("dark-theme")
+    ) {
+
+        themeToggle.textContent =
+            "☀️ Light Mode";
+
+    } else {
+
+        themeToggle.textContent =
+            "🌙 Dark Mode";
+
+    }
+
+    themeToggle.setAttribute(
+        "aria-pressed",
+        String(document.body.classList.contains("dark-theme"))
+    );
+
+}
+
+applyTheme(isDarkTheme());
+updateThemeButton();
+
+if (themeToggle) {
+
+    themeToggle.addEventListener(
+        "click",
+        function () {
+
+            const isDark =
+                !document.body.classList.contains("dark-theme");
+
+            applyTheme(isDark);
+
+            try {
+                localStorage.setItem(
+                    themeStorageKey,
+                    isDark ? "dark" : "light"
+                );
+            } catch (error) {
+                console.error("Unable to save the theme preference.", error);
+            }
+
+            updateThemeButton();
+
+        }
+    );
+
+}
+
+
+/* =================================================
+   3. NOTIFICATION
+================================================= */
+
+const notification =
+    document.getElementById("notification");
+
+const closeNotification =
+    document.getElementById("closeNotification");
+
+if (
+    notification &&
+    closeNotification
+) {
+
+    closeNotification.addEventListener(
+        "click",
+        function () {
+
+            notification.style.display =
+                "none";
+
+        }
+    );
+
+}
+
+
+/* =================================================
+   4. MODAL
+================================================= */
+
+const eventModal =
+    document.getElementById("eventModal");
+
+const openModal =
+    document.getElementById("openModal");
+
+const closeModal =
+    document.getElementById("closeModal");
+
+const modalCloseButton =
+    document.getElementById("modalCloseButton");
+
+const modalTitle =
+    document.getElementById("modalTitle");
+
+const modalText =
+    document.getElementById("modalText");
+
+
+function showModal(title, text) {
+
+    if (!eventModal) {
+        return;
+    }
+
+    if (modalTitle) {
+        modalTitle.textContent = title;
+    }
+
+    if (modalText) {
+        modalText.textContent = text;
+    }
+
+    eventModal.classList.add("show");
+
+}
+
+
+function hideModal() {
+
+    if (eventModal) {
+
+        eventModal.classList.remove("show");
+
+    }
+
+}
+
+
+if (openModal) {
+
+    openModal.addEventListener(
+        "click",
+        function () {
+
+            showModal(
+                "About StudentHub",
+                "StudentHub helps students manage academic activities, events, profiles and campus communication."
+            );
+
+        }
+    );
+
+}
+
+
+if (closeModal) {
+
+    closeModal.addEventListener(
+        "click",
+        hideModal
+    );
+
+}
+
+
+if (modalCloseButton) {
+
+    modalCloseButton.addEventListener(
+        "click",
+        hideModal
+    );
+
+}
+
+
+if (eventModal) {
+
+    eventModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target === eventModal
+            ) {
+
+                hideModal();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =================================================
+   5. EVENT MODAL BUTTONS
+================================================= */
+
+const eventButtons =
+    document.querySelectorAll(
+        ".event-details-btn"
+    );
+
+eventButtons.forEach(
+    function (button) {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const eventName =
+                    button.dataset.event;
+
+                showModal(
+                    eventName,
+                    "You can register for this event through the StudentHub Events section."
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =================================================
+   6. CONTENT SLIDER
+================================================= */
+
+const slides =
+    document.querySelectorAll(".slide");
+
+const nextSlide =
+    document.getElementById("nextSlide");
+
+const previousSlide =
+    document.getElementById("previousSlide");
+
+let currentSlide = 0;
+
+
+function showSlide(index) {
+
+    if (slides.length === 0) {
+        return;
+    }
+
+    slides.forEach(
+        function (slide) {
+
+            slide.classList.remove("active");
+
+        }
+    );
+
+    slides[index].classList.add("active");
+
+}
+
+
+if (slides.length > 0) {
+
+    showSlide(currentSlide);
+
+    if (nextSlide) {
+
+        nextSlide.addEventListener(
+            "click",
+            function () {
+
+                currentSlide++;
+
+                if (
+                    currentSlide >= slides.length
+                ) {
+
+                    currentSlide = 0;
+
+                }
+
+                showSlide(currentSlide);
+
+            }
+        );
+
+    }
+
+    if (previousSlide) {
+
+        previousSlide.addEventListener(
+            "click",
+            function () {
+
+                currentSlide--;
+
+                if (currentSlide < 0) {
+
+                    currentSlide =
+                        slides.length - 1;
+
+                }
+
+                showSlide(currentSlide);
+
+            }
+        );
+
+    }
+
+}
+
+
+/* =================================================
+   7. FAQ
+================================================= */
+
+const faqQuestions =
+    document.querySelectorAll(
+        ".faq-question"
+    );
+
+faqQuestions.forEach(
+    function (question) {
+
+        question.addEventListener(
+            "click",
+            function () {
+
+                const answer =
+                    question.nextElementSibling;
+
+                const icon =
+                    question.querySelector("span");
+
+                answer.classList.toggle("open");
+
+                const isOpen =
+                    answer.classList.contains("open");
+
+                if (icon) {
+
+                    icon.textContent =
+                        isOpen ? "−" : "+";
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+/* =================================================
+   8. PHONE INPUT
+================================================= */
+
+const phoneInput =
+    document.getElementById("phone");
+
+if (phoneInput) {
+
+    phoneInput.addEventListener(
+        "input",
+        function () {
+
+            /* Allow only numbers */
+
+            this.value =
+                this.value.replace(
+                    /[^0-9]/g,
+                    ""
+                );
+
+            /* Maximum 10 digits */
+
+            if (this.value.length > 10) {
+
+                this.value =
+                    this.value.slice(
+                        0,
+                        10
+                    );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =================================================
+   9. REGISTRATION FORM
+================================================= */
+
+const registerForm =
+    document.getElementById("registerForm");
+
+const registrationPassword =
+    document.getElementById("password");
+
+const passwordStrength =
+    document.getElementById("passwordStrength");
+
+if (registrationPassword && passwordStrength) {
+    registrationPassword.addEventListener("input", function () {
+        const value = registrationPassword.value;
+        const hasLetter = /[A-Za-z]/.test(value);
+        const hasNumber = /\d/.test(value);
+        const hasSymbol = /[^A-Za-z0-9]/.test(value);
+
+        passwordStrength.classList.remove("weak", "fair", "strong");
+
+        if (value.length === 0) {
+            passwordStrength.textContent =
+                "Use 8 or more characters with at least one letter and one number.";
+        } else if (value.length < 8 || !hasLetter || !hasNumber) {
+            passwordStrength.textContent =
+                "Weak: use 8 or more characters with at least one letter and one number.";
+            passwordStrength.classList.add("weak");
+        } else if (value.length < 12 || !hasSymbol) {
+            passwordStrength.textContent =
+                "Fair: your password meets the minimum requirements.";
+            passwordStrength.classList.add("fair");
+        } else {
+            passwordStrength.textContent =
+                "Strong: use a unique password that you do not reuse elsewhere.";
+            passwordStrength.classList.add("strong");
+        }
+    });
+}
+
+function attachCsrfToken(form) {
+    if (!form) {
+        return;
+    }
+
+    const submitButton =
+        form.querySelector('button[type="submit"]');
+
+    if (submitButton) {
+        submitButton.disabled = true;
+    }
+
+    fetch("../php/csrf.php", {credentials: "same-origin"})
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error("Unable to initialize secure form submission.");
+            }
+
+            return response.json();
+        })
+        .then(function (result) {
+            if (typeof result.token !== "string" || result.token.length === 0) {
+                throw new Error("The server did not provide a valid form token.");
+            }
+
+            const tokenInput =
+                document.createElement("input");
+
+            tokenInput.type = "hidden";
+            tokenInput.name = "csrf_token";
+            tokenInput.value = result.token;
+            form.appendChild(tokenInput);
+
+            if (submitButton) {
+                submitButton.disabled = false;
+            }
+        })
+        .catch(function (error) {
+            console.error(error);
+            const message =
+                document.getElementById("registerMessage") ||
+                document.getElementById("loginMessage");
+            if (message) {
+                message.textContent =
+                    "Secure form setup failed. Reload the page before submitting.";
+                message.className = "error-message show";
+            }
+        });
+}
+
+attachCsrfToken(registerForm);
+
+if (registerForm) {
+    const registrationStatus =
+        new URLSearchParams(window.location.search).get("registered");
+
+    if (registrationStatus === "1") {
+        const message =
+            document.getElementById("registerMessage");
+
+        if (message) {
+            message.textContent =
+                "Registration details were saved successfully.";
+            message.className = "success-message show";
+        }
+
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+        );
+    }
+
+
+    registerForm.addEventListener(
+        "submit",
+        function (event) {
+
+            /* ---------- Get Values ---------- */
+
+            const fullname =
+                document.getElementById(
+                    "fullname"
+                ).value.trim();
+
+            const email =
+                document.getElementById(
+                    "email"
+                ).value.trim();
+
+            const phone =
+                document.getElementById(
+                    "phone"
+                ).value.trim();
+
+            const city =
+                document.getElementById(
+                    "city"
+                ).value.trim();
+
+            const dob =
+                document.getElementById(
+                    "dob"
+                ).value;
+
+            const password =
+                document.getElementById(
+                    "password"
+                ).value;
+
+            const confirmPassword =
+                document.getElementById(
+                    "confirmPassword"
+                ).value;
+
+            const course =
+                document.getElementById(
+                    "course"
+                ).value;
+
+            const studentId =
+                document.getElementById(
+                    "student_id"
+                ).value.trim().toUpperCase();
+
+            const year =
+                document.getElementById(
+                    "year"
+                ).value;
+
+            const terms =
+                document.getElementById(
+                    "terms"
+                ).checked;
+
+
+            /* ---------- Regex ---------- */
+
+            const namePattern =
+                /^[A-Za-z ]+$/;
+
+            const emailPattern =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            const phonePattern =
+                /^[0-9]{10}$/;
+
+            const cityPattern =
+                /^[\p{L} .-]{2,100}$/u;
+
+            const passwordPattern =
+                /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+
+
+            /* ---------- Error Elements ---------- */
+
+            const nameError =
+                document.getElementById(
+                    "nameError"
+                );
+
+            const emailError =
+                document.getElementById(
+                    "emailError"
+                );
+
+            const phoneError =
+                document.getElementById(
+                    "phoneError"
+                );
+
+            const cityError =
+                document.getElementById(
+                    "cityError"
+                );
+
+            const passwordError =
+                document.getElementById(
+                    "passwordError"
+                );
+
+            const confirmPasswordError =
+                document.getElementById(
+                    "confirmPasswordError"
+                );
+
+            const courseError =
+                document.getElementById(
+                    "courseError"
+                );
+
+            const studentIdError =
+                document.getElementById(
+                    "studentIdError"
+                );
+
+            const yearError =
+                document.getElementById(
+                    "yearError"
+                );
+
+            const genderError =
+                document.getElementById(
+                    "genderError"
+                );
+
+            const termsError =
+                document.getElementById(
+                    "termsError"
+                );
+
+
+            /* ---------- Clear Old Errors ---------- */
+
+            nameError.textContent = "";
+            emailError.textContent = "";
+            phoneError.textContent = "";
+            cityError.textContent = "";
+            passwordError.textContent = "";
+            confirmPasswordError.textContent = "";
+            courseError.textContent = "";
+            studentIdError.textContent = "";
+            yearError.textContent = "";
+            genderError.textContent = "";
+            termsError.textContent = "";
+
+
+            let isValid = true;
+
+
+            /* ---------- Name ---------- */
+
+            if (fullname === "") {
+
+                nameError.textContent =
+                    "Name is required.";
+
+                isValid = false;
+
+            } else if (
+                !namePattern.test(fullname)
+            ) {
+
+                nameError.textContent =
+                    "Name should contain only letters and spaces.";
+
+                isValid = false;
+
+            }
+
+
+            /* ---------- Email ---------- */
+
+            if (email === "") {
+
+                emailError.textContent =
+                    "Email is required.";
+
+                isValid = false;
+
+            } else if (
+                !emailPattern.test(email)
+            ) {
+
+                emailError.textContent =
+                    "Please enter a valid email address.";
+
+                isValid = false;
+
+            }
+
+
+            /* ---------- Mobile ---------- */
+
+            if (phone === "") {
+
+                phoneError.textContent =
+                    "Mobile number is required.";
+
+                isValid = false;
+
+            } else if (
+                !phonePattern.test(phone)
+            ) {
+
+                phoneError.textContent =
+                    "Mobile number must contain exactly 10 digits.";
+
+                isValid = false;
+
+            }
+
+
+            /* ---------- City ---------- */
+
+            if (
+                city !== "" &&
+                !cityPattern.test(city)
+            ) {
+
+                cityError.textContent =
+                    "Enter a valid city name using letters, spaces, periods or hyphens.";
+
+                isValid = false;
+
+            }
+
+
+            /* ---------- Date of Birth ---------- */
+
+            if (dob === "") {
+
+                isValid = false;
+
+            }
+
+
+            /* ---------- Password ---------- */
+
+            if (password === "") {
+
+                passwordError.textContent =
+                    "Password is required.";
+
+                isValid = false;
+
+            } else if (
+                !passwordPattern.test(password)
+            ) {
+
+                passwordError.textContent =
+                    "Password must contain at least 8 characters, including a letter and a number.";
+
+                isValid = false;
+
+            }
+
+
+            /* ---------- Confirm Password ---------- */
+
+            if (confirmPassword === "") {
+
+                confirmPasswordError.textContent =
+                    "Please confirm your password.";
+
+                isValid = false;
+
+            } else if (
+                password !== confirmPassword
+            ) {
+
+                confirmPasswordError.textContent =
+                    "Passwords do not match.";
+
+                isValid = false;
+
+            }
+
+
+            /* ---------- Course ---------- */
+
+            if (course === "") {
+
+                courseError.textContent =
+                    "Please select a course.";
+
+                isValid = false;
+
+            }
+
+            if (!/^[0-9]{2}(AIML|CSE|IT|CE)[0-9]{3}$/.test(studentId)) {
+
+                studentIdError.textContent =
+                    "Use a Student ID like 25AIML002 or 25CSE001.";
+
+                isValid = false;
+
+            }
+
+
+            /* ---------- Year ---------- */
+
+            if (year === "") {
+
+                yearError.textContent =
+                    "Please select your year.";
+
+                isValid = false;
+
+            }
+
+
+            /* ---------- Gender ---------- */
+
+            const gender =
+                document.querySelector(
+                    'input[name="gender"]:checked'
+                );
+
+            if (!gender) {
+
+                genderError.textContent =
+                    "Please select your gender.";
+
+                isValid = false;
+
+            }
+
+
+            /* ---------- Terms ---------- */
+
+            if (!terms) {
+
+                termsError.textContent =
+                    "You must accept the Terms and Conditions.";
+
+                isValid = false;
+
+            }
+
+
+            if (!isValid) {
+                event.preventDefault();
+            }
+
+        }
+    );
+
+}
+
+
+/* =================================================
+   10. LOGIN FORM
+   Simple frontend demo
+================================================= */
+
+const loginForm =
+    document.getElementById("loginForm");
+
+const loginMessage =
+    document.getElementById("loginMessage");
+
+attachCsrfToken(loginForm);
+
+if (loginForm && !loginForm.action.endsWith("/php/login.php")) {
+
+    loginForm.addEventListener(
+        "submit",
+        function (event) {
+
+            event.preventDefault();
+
+            const loginEmail =
+                document.getElementById(
+                    "loginEmail"
+                ).value.trim();
+
+            const loginPassword =
+                document.getElementById(
+                    "loginPassword"
+                ).value;
+
+
+            if (
+                loginEmail === "" ||
+                loginPassword === ""
+            ) {
+
+                loginMessage.textContent =
+                    "Please enter your email and password.";
+
+                loginMessage.className =
+                    "error-message show";
+
+                return;
+
+            }
+
+
+            loginMessage.textContent =
+                "Login successful! Redirecting to dashboard...";
+
+            loginMessage.className =
+                "success-message show";
+
+
+            setTimeout(
+                function () {
+
+                    window.location.href =
+                        "dashboard.html";
+
+                },
+                1000
+            );
+
+        }
+    );
+
+}
+
+document.querySelectorAll("form[data-confirm]").forEach(
+    function (form) {
+        form.addEventListener("submit", function (event) {
+            if (!window.confirm(form.dataset.confirm)) {
+                event.preventDefault();
+            }
+        });
+    }
+);
+
+
+/* =================================================
+   11. CONTACT FORM
+================================================= */
+
+const contactForm =
+    document.getElementById("contactForm");
+
+const contactMessage =
+    document.getElementById("contactMessage");
+
+if (contactForm) {
+
+    contactForm.addEventListener(
+        "submit",
+        function (event) {
+
+            event.preventDefault();
+
+            contactMessage.textContent =
+                "Your message has been sent successfully!";
+
+            contactMessage.className =
+                "success-message show";
+
+            contactForm.reset();
+
+        }
+    );
+
+}
+
+
+/* =================================================
+   12. FEEDBACK FORM
+================================================= */
+
+const feedbackForm =
+    document.getElementById("feedbackForm");
+
+const feedbackMessage =
+    document.getElementById("feedbackMessage");
+
+if (feedbackForm) {
+
+    feedbackForm.addEventListener(
+        "submit",
+        function (event) {
+
+            event.preventDefault();
+
+            feedbackMessage.textContent =
+                "Thank you! Your feedback has been submitted successfully.";
+
+            feedbackMessage.className =
+                "success-message show";
+
+            feedbackForm.reset();
+
+        }
+    );
+
+}
+
+
+/* =================================================
+   13. DASHBOARD
+   No localStorage for now
+================================================= */
+
+
+/* =================================================
+   14. LOGOUT
+================================================= */
+
+const logoutButton =
+    document.getElementById(
+        "logoutButton"
+    );
+
+if (logoutButton) {
+
+    logoutButton.addEventListener(
+        "click",
+        function () {
+
+            window.location.href =
+                "login.html";
+
+        }
+    );
+
+}
